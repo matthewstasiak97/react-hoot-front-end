@@ -1,40 +1,45 @@
+import { useContext, useState, useEffect } from "react";
 import HootDetails from './components/HootDetails/HootDetails';
+import HootList from "./components/HootList/HootList.jsx";
+import * as hootService from "./services/hootService";
 import './App.css'
-import { useEffect, useContext } from 'react';
 
-const App = () => {
+function App() {
+  const [hoots, setHoots] = useState([]);
+
   const { user } = useContext(UserContext);
-  
+
   useEffect(() => {
     const fetchAllHoots = async () => {
       const hootsData = await hootService.index();
-      
-      // console log to verify
-      console.log('hootsData:', hootsData);
+
+      // update to set state:
+      setHoots(hootsData);
     };
     if (user) fetchAllHoots();
   }, [user]);
-  
+
   return (
-  <>
-    {user ? (
-      <>
-        {/* Protected Routes (available only to signed-in users) */}
-        <Route path='/hoots' element={<HootList hoots={hoots}/>} />
-        {/* Add this route! */}
-        <Route 
-          path='/hoots/:hootId'
-          element={<HootDetails />}
-        />
-      </>
-    ) : (
-      <>
-        {/* Non-user Routes (available only to guests) */}
-        <Route path='/sign-up' element={<SignUpForm />} />
-        <Route path='/sign-in' element={<SignInForm />} />
-      </>
-    )}
-  </>
-  )
+    <>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+        {user ? (
+          <>
+            {/* Protected routes (available only to signed-in users) */}
+            <Route path="/hoots" element={<HootList hoots={hoots} />} />
+            <Route path='/hoots/:hootId' element={<HootDetails />} />
+          </>
+        ) : (
+          <>
+            {/* Non-user routes (available only to guests) */}
+            <Route path="/sign-up" element={<SignUpForm />} />
+            <Route path="/sign-in" element={<SignInForm />} />
+          </>
+        )}
+      </Routes>
+    </>
+  );
 };
-export default App
+
+export default App;
