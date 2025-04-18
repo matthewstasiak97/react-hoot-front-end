@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import HootDetails from './components/HootDetails/HootDetails';
 import './App.css'
+import { useEffect, useContext } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
+  const { user } = useContext(UserContext);
+  
+  useEffect(() => {
+    const fetchAllHoots = async () => {
+      const hootsData = await hootService.index();
+      
+      // console log to verify
+      console.log('hootsData:', hootsData);
+    };
+    if (user) fetchAllHoots();
+  }, [user]);
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+  <>
+    {user ? (
+      <>
+        {/* Protected Routes (available only to signed-in users) */}
+        <Route path='/hoots' element={<HootList hoots={hoots}/>} />
+        {/* Add this route! */}
+        <Route 
+          path='/hoots/:hootId'
+          element={<HootDetails />}
+        />
+      </>
+    ) : (
+      <>
+        {/* Non-user Routes (available only to guests) */}
+        <Route path='/sign-up' element={<SignUpForm />} />
+        <Route path='/sign-in' element={<SignInForm />} />
+      </>
+    )}
+  </>
   )
-}
-
+};
 export default App
