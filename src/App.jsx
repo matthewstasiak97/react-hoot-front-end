@@ -1,23 +1,24 @@
 import { useContext, useState, useEffect } from "react";
 import HootDetails from './components/HootDetails/HootDetails';
 import HootList from "./components/HootList/HootList.jsx";
-import * as hootService from "./services/hootService";
+import * as hootService from "./services/hootService.js";
+// Import UserProvider/Context
 import './App.css'
 
 function App() {
   const [hoots, setHoots] = useState([]);
 
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
+  const user = { username: "bonnie", _id: "xyz123"}
 
   useEffect(() => {
     const fetchAllHoots = async () => {
       const hootsData = await hootService.index();
-
       // update to set state:
       setHoots(hootsData);
     };
     if (user) fetchAllHoots();
-  }, [user]);
+  }, []);
 
   return (
     <>
